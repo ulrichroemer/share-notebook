@@ -2,7 +2,8 @@ from math import *
 from random import gauss
 import matplotlib.pyplot as plt
 from matplotlib.patches import Arc
-
+from scipy.optimize import curve_fit
+import numpy as np
 
 def linspace(lo, hi, n):
     x = [(hi - lo) / n * i + lo for i in range(n)]
@@ -22,8 +23,35 @@ def plot_crew_distribution(mu, sigma):
     x = linspace(mu - 3 * sigma, mu + 3 * sigma, 100)
     plt.plot(x, norm_pdf(x, mu, sigma))
     plt.xlabel('$ m_{Crew} $ in [kg]')
-    plt.ylabel('Wahrscheinlichkeit')
+    plt.ylabel('Wahrscheinlichkeitsdichte')
     plt.show()
+
+def fit_weight_distribution():
+    plt.figure()
+    data_x=np.arange(44.5, 110, 10)
+    data_y=np.array([1.2, 10.7, 20.1, 24.5, 21, 11.7, 10.8])/100
+    k=plt.bar(data_x, data_y, width=9)
+    for rect, label in zip(k.patches, ['<50','50-59', '60-69', '70-79', '80-89', '90-99', '>=100']):
+        height = rect.get_height()
+        plt.text(rect.get_x() + rect.get_width() / 2, height/2-0.008, label, ha='center', va='bottom')
+
+    # Data for Least-Square Fit with (rescaled) normal distribution
+    data_x[-1]=109
+    plt.plot(data_x, data_y, 'kx')
+
+    def gaussian(x, a, mean, sigma):
+        return a * np.exp(-((x - mean)**2 / (2 * sigma**2)))
+
+    popt,pcov = curve_fit(gaussian, data_x, data_y, [0.1, 80, 20])
+    mu = popt[1]
+    sigma = popt[2]
+
+    xi = np.linspace(40, 110)
+    plt.plot(xi,gaussian(xi,popt[0], mu, sigma), 'r')
+    plt.xlim([40, 110])
+    plt.show()
+
+    return mu,sigma
 
 
 def visualization_MC_airplanes():
