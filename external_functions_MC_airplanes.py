@@ -43,7 +43,7 @@ def fit_weight_distribution():
         return a * np.exp(-((x - mean)**2 / (2 * sigma**2)))
 
     #popt,pcov = curve_fit(gaussian, data_x, data_y, [0.1, 80, 20]) 
-    popt = array([ 0.23589765, 77.29540412, 18.2463603 ]) #(mybinder does not support scipy packages..)
+    popt = np.array([ 0.23589765, 77.29540412, 18.2463603 ]) #(mybinder does not support scipy packages..)
 
     mu = popt[1]
     sigma = popt[2]
